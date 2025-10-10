@@ -19,8 +19,8 @@ int read_sb () {
 
     fclose(disk);
 
-    printf("fs_name: %.4s\n", sb.fs_name);
-    printf("fs_subject: %.4s\n", sb.fs_subject);
+    printf("name: %.4s\n", sb.name);
+    printf("detail: %.4s\n", sb.detail);
     printf("total_blocks: %u\n", sb.total_blocks);
     printf("block_size: %u\n", sb.block_size);
     printf("total_inodes: %u\n", sb.total_inodes);
