@@ -8,7 +8,7 @@ int read_sb () {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
-        perror("Error.");
+        perror("read_sb: Ha ocurrido un error.");
         return 1;
     };
 

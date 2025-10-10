@@ -2,6 +2,7 @@
 
 #include "create_disk.h"
 #include "read_sb.h"
+#include "create_file.h"
 
 int main () {
     while (1) {
@@ -9,11 +10,12 @@ int main () {
         printf("Elige una opcion:\n\n");
         printf("0. Salir.\n");
         printf("1. Crear disco (reemplaza existente).\n");
-        printf("2. Leer Superblock.\n\n");
-
+        printf("2. Leer Superblock.\n");
+        printf("3. Crear archivo.\n\n");
+        
         int option;
 
-        printf("Escribe tu opcion: ");
+        printf("Ingresa tu eleccion: ");
         scanf("%d", &option);
         printf("\n\n");
 
@@ -26,6 +28,12 @@ int main () {
                 break;
             case 2:
                 read_sb();
+                break;
+            case 3:
+                char filename[32];
+                printf("Nombre del archivo: ");
+                scanf("%32s", filename);
+                create_file(filename);
                 break;
             default:
                 continue;

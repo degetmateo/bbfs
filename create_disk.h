@@ -18,7 +18,7 @@ int create_disk () {
     FILE *disk = fopen("disk.bbfs", "w+b");
 
     if (!disk) {
-        perror("No se pudo crear el disco virtual.");
+        perror("create_disk: No se pudo crear el disco virtual.");
         return 1;
     };
 
