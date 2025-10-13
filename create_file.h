@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "fs.h"
+#include "search_free_block.h"
 
 int create_file (char filename[32]) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -35,6 +36,8 @@ int create_file (char filename[32]) {
             
             inode.is_used = 1;
             memcpy(inode.filename, filename, 32);
+
+            // BUSCAR Y ASIGNAR PRIMER BLOQUE
 
             fwrite(&inode, sizeof(Inode), 1, disk);
             break;

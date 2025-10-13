@@ -3,6 +3,7 @@
 #include "create_disk.h"
 #include "read_sb.h"
 #include "create_file.h"
+#include "write_file.h"
 
 int main () {
     while (1) {
@@ -19,6 +20,8 @@ int main () {
         scanf("%d", &option);
         printf("\n\n");
 
+        char filename[32];
+
         switch (option) {
             case 0:
                 return 0;
@@ -30,11 +33,19 @@ int main () {
                 read_sb();
                 break;
             case 3:
-                char filename[32];
                 printf("Nombre del archivo: ");
                 scanf("%32s", filename);
                 create_file(filename);
                 break;
+            case 4:
+                printf("Nombre del archivo: ");
+                scanf("%32s", filename);
+
+                char data[503];
+                printf("Escribe el contenido: ");
+                scanf("%503s", data);
+                
+                write_file(filename, data);
             default:
                 continue;
                 break;
