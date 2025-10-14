@@ -7,13 +7,18 @@
 #include "fs.h"
 #include "search_free_block.h"
 
-int create_file (char filename[32]) {
+int create_file () {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
         perror("create_file: Ha ocurrido un error.");
-        return 1;
+        return -1;
     };
+
+    char filename[32];
+
+    printf("Nombre del archivo: ");
+    scanf("%32s", filename);
 
     Superblock sb;
 
@@ -23,12 +28,12 @@ int create_file (char filename[32]) {
     fseek(disk, (sb.starting_inode_block * sb.block_size), SEEK_SET);
     Inode inode;
 
-    int actual_inode = 1;
+    int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
-        if (actual_inode >= sb.total_inodes) {
+        if (inode_number >= sb.total_inodes) {
             perror("create_file: No hay más Inodes libres.");
             fclose(disk);
-            return 1;
+            return -1;
         };
 
         if (!inode.is_used) {
@@ -37,17 +42,45 @@ int create_file (char filename[32]) {
             inode.is_used = 1;
             memcpy(inode.filename, filename, 32);
 
-            // BUSCAR Y ASIGNAR PRIMER BLOQUE
-
             fwrite(&inode, sizeof(Inode), 1, disk);
             break;
         };
 
-        actual_inode++;
+        inode_number++;
     };
 
-    fclose(disk);
+    Block block;
+    fseek(disk, (sb.starting_data_block * sb.block_size), SEEK_SET);
 
+    int block_number = 1;
+    while (fread(&block, sizeof(Block), 1, disk) == 1) {
+        if (block_number >= sb.total_blocks) {
+            perror("create_file: No hay más bloques libres.");
+            fclose(disk);
+            return -1;
+        };
+
+        if (!block.is_used) {
+            fseek(disk, -sizeof(Block), SEEK_CUR);
+            
+            block.is_used = 1;
+
+            fwrite(&block, sizeof(Block), 1, disk);
+            break;
+        };
+
+        block_number++;
+    };
+
+    fseek(disk, (((1 + inode_number) * sb.block_size)), SEEK_SET);
+    fread(&inode, sizeof(Inode), 1, disk);
+    fseek(disk, -sizeof(Inode), SEEK_CUR);
+
+    inode.starting_block = block_number;
+
+    fwrite(&inode, sizeof(Inode), 1, disk);
+
+    fclose(disk);
     printf("Se ha creado un archivo con nombre: %32s", filename);
     return 0;
 };

@@ -12,15 +12,14 @@ int main () {
         printf("0. Salir.\n");
         printf("1. Crear disco (reemplaza existente).\n");
         printf("2. Leer Superblock.\n");
-        printf("3. Crear archivo.\n\n");
+        printf("3. Crear archivo.\n");
+        printf("4. Escribir archivo.\n\n");
         
         int option;
 
         printf("Ingresa tu eleccion: ");
         scanf("%d", &option);
         printf("\n\n");
-
-        char filename[32];
 
         switch (option) {
             case 0:
@@ -33,19 +32,10 @@ int main () {
                 read_sb();
                 break;
             case 3:
-                printf("Nombre del archivo: ");
-                scanf("%32s", filename);
-                create_file(filename);
+                create_file();
                 break;
             case 4:
-                printf("Nombre del archivo: ");
-                scanf("%32s", filename);
-
-                char data[503];
-                printf("Escribe el contenido: ");
-                scanf("%503s", data);
-                
-                write_file(filename, data);
+                write_file();
             default:
                 continue;
                 break;
