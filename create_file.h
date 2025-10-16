@@ -7,18 +7,13 @@
 #include "fs.h"
 #include "search_free_block.h"
 
-int create_file () {
+int create_file (char filename[32]) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
         perror("create_file: Ha ocurrido un error.");
         return -1;
     };
-
-    char filename[32];
-
-    printf("Nombre del archivo: ");
-    scanf("%32s", filename);
 
     Superblock sb;
 

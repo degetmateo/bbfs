@@ -5,6 +5,29 @@
 #include "create_file.h"
 #include "write_file.h"
 
+#include "./utils/read_console.h"
+
+int console_create_file () {
+    char filename[32];
+
+    printf("Nombre del archivo: ");
+    scanf("%32s", filename);
+
+    create_file(filename);
+};
+
+int console_write_file () {
+    char filename[32];
+
+    printf("Nombre del archivo: ");
+    scanf("%32s", filename);
+
+    printf("Escribe el archivo: ");
+    char* data = read_console();
+
+    write_file(filename, data);
+};
+
 int main () {
     while (1) {
         printf("\n");
@@ -32,10 +55,10 @@ int main () {
                 read_sb();
                 break;
             case 3:
-                create_file();
+                console_create_file();
                 break;
             case 4:
-                write_file();
+                console_write_file();
             default:
                 continue;
                 break;

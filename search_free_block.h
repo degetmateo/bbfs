@@ -21,19 +21,21 @@ int search_free_block () {
     Block block;
     fseek(disk, (sb.starting_data_block * sb.block_size), SEEK_SET);
     
-    int actual_block = 1;
+    int block_number = 1;
     while (fread(&block, sizeof(Block), 1, disk) == 1) {
         if (!block.is_used) {
             fseek(disk, -sizeof(Block), SEEK_CUR);
+
             block.is_used = 1;
+            
             fwrite(&block, sizeof(Block), 1, disk);
             break;
         };
 
-        actual_block++;
+        block_number++;
     };
 
-    return actual_block;
+    return block_number;
 };
 
 #endif
