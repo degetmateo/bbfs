@@ -43,4 +43,9 @@ typedef struct __attribute__((packed)) {
     char data[503]; // 503B
 } Block;
 
+typedef struct {
+    char *data;
+    unsigned long size;
+} Buffer;
+
 #endif

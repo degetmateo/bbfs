@@ -14,7 +14,6 @@ int search_free_block () {
     };
 
     Superblock sb;
-
     fseek(disk, 0, SEEK_SET);
     fread(&sb, sizeof(Superblock), 1, disk);
 
@@ -35,6 +34,7 @@ int search_free_block () {
         block_number++;
     };
 
+    fclose(disk);
     return block_number;
 };
 

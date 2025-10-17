@@ -23,7 +23,7 @@ int console_write_file () {
     scanf("%32s", filename);
 
     printf("Escribe el archivo: ");
-    char* data = read_console();
+    Buffer data = read_console();
 
     write_file(filename, data);
 };

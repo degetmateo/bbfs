@@ -16,12 +16,11 @@ int create_file (char filename[32]) {
     };
 
     Superblock sb;
-
     fseek(disk, 0, SEEK_SET);
     fread(&sb, sizeof(Superblock), 1, disk);
 
-    fseek(disk, (sb.starting_inode_block * sb.block_size), SEEK_SET);
     Inode inode;
+    fseek(disk, (sb.starting_inode_block * sb.block_size), SEEK_SET);
 
     int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
@@ -44,34 +43,13 @@ int create_file (char filename[32]) {
         inode_number++;
     };
 
-    Block block;
-    fseek(disk, (sb.starting_data_block * sb.block_size), SEEK_SET);
+    int free_block_number = search_free_block();
 
-    int block_number = 1;
-    while (fread(&block, sizeof(Block), 1, disk) == 1) {
-        if (block_number >= sb.total_blocks) {
-            perror("create_file: No hay más bloques libres.");
-            fclose(disk);
-            return -1;
-        };
-
-        if (!block.is_used) {
-            fseek(disk, -sizeof(Block), SEEK_CUR);
-            
-            block.is_used = 1;
-
-            fwrite(&block, sizeof(Block), 1, disk);
-            break;
-        };
-
-        block_number++;
-    };
-
-    fseek(disk, (((1 + inode_number) * sb.block_size)), SEEK_SET);
+    fseek(disk, (((sb.starting_inode_block + inode_number) * sb.block_size)), SEEK_SET);
     fread(&inode, sizeof(Inode), 1, disk);
     fseek(disk, -sizeof(Inode), SEEK_CUR);
 
-    inode.starting_block = block_number;
+    inode.starting_block = free_block_number;
 
     fwrite(&inode, sizeof(Inode), 1, disk);
 

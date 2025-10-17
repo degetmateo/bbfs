@@ -7,8 +7,10 @@
 
 #include "fs.h"
 #include "./utils/read_console.h"
+#include "write_block.h"
+#include "chain_blocks.h"
 
-int write_file (char filename[32], char* data) {
+int write_file (char filename[32], Buffer buffer) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
@@ -38,50 +40,32 @@ int write_file (char filename[32], char* data) {
         inode_number++;
     };
 
-    unsigned int blocks_needed = (sizeof(data) + 503 - 1) / 503;
-
-    if (blocks_needed > sb.total_blocks) {
-        perror("write_file: No hay tantos bloques!");
-        return -1;
-    };
-    
-    Block block;
-    fseek(disk, (sb.block_size * (sb.starting_data_block + inode.starting_block)), SEEK_SET);
-    fread(&block, sizeof(Block), 1, disk);
-
-    // while (block.next_block != 0) {
-    //     fseek(disk, (sb.block_size * block.next_block), SEEK_CUR);
-    //     fread(&block, sizeof(Block), 1, disk);
-    // };
-
-    fseek(disk, -sizeof(Block), SEEK_CUR);
-
+    int actual_block_number = inode.starting_block;
     unsigned long offset = 0;
 
-    while (offset < sizeof(data)) {
-        unsigned long remaining = sizeof(data) - offset;
-        unsigned long to_write = (remaining > sb.block_size) ? sb.block_size : remaining;
+    while (offset < buffer.size) {
+        unsigned long remaining = buffer.size - offset;
+        unsigned long to_write = (remaining > 503) ? 503 : remaining;
 
-        unsigned int free_block_number = search_free_block();
+        write_block(actual_block_number, buffer.data + offset, to_write);
+
+        int next_block = search_next_block(actual_block_number); // HACER ESTO
+
+
+        int free_block_number = search_free_block();
         
         if (free_block_number == -1) {
             perror("write_file: No hay bloques disponibles.");
             return -1;
         };
 
-        
+        chain_blocks(actual_block_number, free_block_number);
+
+        actual_block_number = free_block_number;
+        offset = offset + to_write;
     };
 
-    // for (int i = 0; i < blocks_needed; i++) {
-    //     memset(block.data, 0, sizeof(block.data));
-
-    //     memcpy(block.data, data, 503);
-    //     fwrite(&block, sizeof(Block), 1, disk);
-        
-    //     break;
-    // };
-
-    free(data);
+    free(buffer.data);
     fclose(disk);
     return 0;
 };
