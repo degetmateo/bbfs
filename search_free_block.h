@@ -18,7 +18,7 @@ int search_free_block () {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block block;
-    fseek(disk, (sb.starting_data_block * sb.block_size), SEEK_SET);
+    fseek(disk, ((sb.starting_data_block - 1) * sb.block_size), SEEK_SET);
     
     int block_number = 1;
     while (fread(&block, sizeof(Block), 1, disk) == 1) {

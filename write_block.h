@@ -19,16 +19,17 @@ int write_block (unsigned int block_number, char* data, unsigned long size) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block block;
-    fseek(disk, (sb.block_size * (sb.starting_data_block + block_number)), SEEK_SET);
-    
-    if (size > sizeof(block.data)) size = sizeof(block.data);
+    fseek(disk, (sb.block_size * (sb.starting_data_block - 1 + block_number)), SEEK_SET);
+    fread(&block, sizeof(Block), 1, disk);
 
     memset(block.data, 0, sizeof(block.data));
     memcpy(block.data, data, size);
 
+    fseek(disk, -sizeof(Block), SEEK_CUR);
     fwrite(&block, sizeof(Block), 1, disk);
 
     fclose(disk);
+    return 0;
 };
 
 #endif

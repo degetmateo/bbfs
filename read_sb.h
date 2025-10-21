@@ -23,6 +23,7 @@ int read_sb () {
     printf("detail: %.4s\n", sb.detail);
     printf("total_blocks: %u\n", sb.total_blocks);
     printf("block_size: %u\n", sb.block_size);
+    printf("block_data_size: %u\n", sb.block_data_size);
     printf("total_inodes: %u\n", sb.total_inodes);
     printf("inode_size: %u\n", sb.inode_size);
     printf("starting_inode_block: %u\n", sb.starting_inode_block);

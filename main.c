@@ -4,6 +4,7 @@
 #include "read_sb.h"
 #include "create_file.h"
 #include "write_file.h"
+#include "read_block.h"
 
 #include "./utils/read_console.h"
 
@@ -28,6 +29,17 @@ int console_write_file () {
     write_file(filename, data);
 };
 
+int console_read_block () {
+    printf("Numero del bloque: ");
+    
+    int number;
+    scanf("%d", &number);
+
+    Block block = read_block(number);
+    printf("%s", block.data);
+    return 0;
+}
+
 int main () {
     while (1) {
         printf("\n");
@@ -36,7 +48,8 @@ int main () {
         printf("1. Crear disco (reemplaza existente).\n");
         printf("2. Leer Superblock.\n");
         printf("3. Crear archivo.\n");
-        printf("4. Escribir archivo.\n\n");
+        printf("4. Escribir archivo.\n");
+        printf("5. Leer bloque.\n\n");
         
         int option;
 
@@ -59,6 +72,10 @@ int main () {
                 break;
             case 4:
                 console_write_file();
+                break;
+            case 5:
+                console_read_block();
+                break;
             default:
                 continue;
                 break;

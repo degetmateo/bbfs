@@ -9,17 +9,18 @@
 #include "read_sb.h"
 
 #define DISK_SIZE 5 * 1024 * 1024
-#define BLOCK_SIZE 512
+#define BLOCK_SIZE 64
 #define TOTAL_BLOCKS (DISK_SIZE / BLOCK_SIZE)
-#define TOTAL_INODES 239
-#define INODE_SIZE 512
+#define TOTAL_INODES 200
+#define INODE_SIZE 64
+#define BLOCK_DATA_SIZE 59
 
 int create_disk () {
     FILE *disk = fopen("disk.bbfs", "w+b");
 
     if (!disk) {
         perror("create_disk: No se pudo crear el disco virtual.");
-        return 1;
+        return -1;
     };
 
     char empty_block[sizeof(Block)];
@@ -40,8 +41,10 @@ int create_disk () {
     sb.total_inodes = TOTAL_INODES;
     sb.inode_size = INODE_SIZE;
     
-    sb.starting_inode_block = 1;
-    sb.starting_data_block = 1 + ((TOTAL_INODES * INODE_SIZE) / BLOCK_SIZE);
+    sb.starting_inode_block = 2;
+    sb.starting_data_block = 2 + ((TOTAL_INODES * INODE_SIZE) / BLOCK_SIZE);
+
+    sb.block_data_size = BLOCK_DATA_SIZE;
 
     fseek(disk, 0, SEEK_SET);
     fwrite(&sb, sizeof(Superblock), 1, disk);

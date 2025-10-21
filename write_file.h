@@ -9,6 +9,7 @@
 #include "./utils/read_console.h"
 #include "write_block.h"
 #include "chain_blocks.h"
+#include "search_next_block.h"
 
 int write_file (char filename[32], Buffer buffer) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -24,7 +25,7 @@ int write_file (char filename[32], Buffer buffer) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Inode inode;
-    fseek(disk, (sb.block_size * sb.starting_inode_block), SEEK_SET);
+    fseek(disk, (sb.block_size * (sb.starting_inode_block - 1)), SEEK_SET);
 
     unsigned int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
@@ -45,23 +46,27 @@ int write_file (char filename[32], Buffer buffer) {
 
     while (offset < buffer.size) {
         unsigned long remaining = buffer.size - offset;
-        unsigned long to_write = (remaining > 503) ? 503 : remaining;
+        unsigned long to_write = (remaining > sb.block_data_size) ? sb.block_data_size : remaining;
 
-        write_block(actual_block_number, buffer.data + offset, to_write);
-
-        int next_block = search_next_block(actual_block_number); // HACER ESTO
-
-
-        int free_block_number = search_free_block();
-        
-        if (free_block_number == -1) {
-            perror("write_file: No hay bloques disponibles.");
+        if (write_block(actual_block_number, buffer.data + offset, to_write) == -1) {
+            perror("write_file: Ha ocurrido un error al escribir el archivo.");
+            free(buffer.data);
+            fclose(disk);
             return -1;
         };
-
-        chain_blocks(actual_block_number, free_block_number);
-
-        actual_block_number = free_block_number;
+        
+        int next_block_number = search_next_block(actual_block_number);
+        
+        if (next_block_number == -1) {
+            perror("write_file: No hay bloques disponibles.");
+            free(buffer.data);
+            fclose(disk);
+            return -1;
+        };
+        
+        chain_blocks(actual_block_number, next_block_number);
+        
+        actual_block_number = next_block_number;
         offset = offset + to_write;
     };
 

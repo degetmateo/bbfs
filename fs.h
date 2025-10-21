@@ -10,7 +10,6 @@
 
 // Superblock es el primer bloque del sistema de archivos
 // Contiene metadatos especiales sobre el sistema de archivos
-// 512 Bytes
 typedef struct __attribute__((packed)) {
     char name[4]; // 4 Bytes, 4B
     char detail[4]; // 4 Bytes, 8B
@@ -24,7 +23,9 @@ typedef struct __attribute__((packed)) {
     unsigned int starting_inode_block; // 4 Bytes, 28B
     unsigned int starting_data_block; // 4 Bytes, 32B
 
-    char reserved[480];
+    unsigned int block_data_size; // 4B, 36B
+
+    char reserved[28];
 } Superblock; // packed para que el compilador no ponga bytes de relleno en memoria
 
 // Inode representa un archivo
@@ -32,15 +33,14 @@ typedef struct __attribute__((packed)) {
     char is_used; // 1 Byte
     unsigned int starting_block; // 4 Bytes, 5B
     char filename[32]; // 32 Bytes, 37B
-    char reserved[475];
+    char reserved[27];
 } Inode;
 
 // Block es la unidad minima de organizacion
 typedef struct __attribute__((packed)) {
     char is_used; // 1 B
-    unsigned int previous_block; // 4B, 5B
-    unsigned int next_block; // 4B, 9B
-    char data[503]; // 503B
+    unsigned int next_block; // 4B, 5B
+    char data[59]; // 64B, 69B
 } Block;
 
 typedef struct {

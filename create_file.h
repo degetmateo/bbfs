@@ -20,7 +20,7 @@ int create_file (char filename[32]) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Inode inode;
-    fseek(disk, (sb.starting_inode_block * sb.block_size), SEEK_SET);
+    fseek(disk, ((sb.starting_inode_block - 1) * sb.block_size), SEEK_SET);
 
     int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
@@ -31,29 +31,20 @@ int create_file (char filename[32]) {
         };
 
         if (!inode.is_used) {
-            fseek(disk, -sizeof(Inode), SEEK_CUR);
-            
             inode.is_used = 1;
             memcpy(inode.filename, filename, 32);
-
+            inode.starting_block = search_free_block();
+            
+            fseek(disk, -sizeof(Inode), SEEK_CUR);
             fwrite(&inode, sizeof(Inode), 1, disk);
             break;
         };
 
         inode_number++;
     };
-
-    int free_block_number = search_free_block();
-
-    fseek(disk, (((sb.starting_inode_block + inode_number) * sb.block_size)), SEEK_SET);
-    fread(&inode, sizeof(Inode), 1, disk);
-    fseek(disk, -sizeof(Inode), SEEK_CUR);
-
-    inode.starting_block = free_block_number;
-
-    fwrite(&inode, sizeof(Inode), 1, disk);
-
+    
     fclose(disk);
+
     printf("Se ha creado un archivo con nombre: %32s", filename);
     return 0;
 };
