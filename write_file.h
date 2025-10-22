@@ -25,7 +25,7 @@ int write_file (char filename[32], Buffer buffer) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Inode inode;
-    fseek(disk, (sb.block_size * (sb.starting_inode_block - 1)), SEEK_SET);
+    fseek(disk, (sb.block_size * sb.first_inode_block_offset), SEEK_SET);
 
     unsigned int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
@@ -41,32 +41,32 @@ int write_file (char filename[32], Buffer buffer) {
         inode_number++;
     };
 
-    int actual_block_number = inode.starting_block;
+    int actual_block_offset = inode.starting_block_offset;
     unsigned long offset = 0;
 
     while (offset < buffer.size) {
         unsigned long remaining = buffer.size - offset;
         unsigned long to_write = (remaining > sb.block_data_size) ? sb.block_data_size : remaining;
 
-        if (write_block(actual_block_number, buffer.data + offset, to_write) == -1) {
+        if (write_block(actual_block_offset, buffer.data + offset, to_write) == -1) {
             perror("write_file: Ha ocurrido un error al escribir el archivo.");
             free(buffer.data);
             fclose(disk);
             return -1;
         };
         
-        int next_block_number = search_next_block(actual_block_number);
+        int next_block_offset = search_next_block(actual_block_offset);
         
-        if (next_block_number == -1) {
+        if (next_block_offset == -1) {
             perror("write_file: No hay bloques disponibles.");
             free(buffer.data);
             fclose(disk);
             return -1;
         };
         
-        chain_blocks(actual_block_number, next_block_number);
+        chain_blocks(actual_block_offset, next_block_offset);
         
-        actual_block_number = next_block_number;
+        actual_block_offset = next_block_offset;
         offset = offset + to_write;
     };
 

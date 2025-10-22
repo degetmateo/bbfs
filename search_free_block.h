@@ -18,9 +18,9 @@ int search_free_block () {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block block;
-    fseek(disk, ((sb.starting_data_block - 1) * sb.block_size), SEEK_SET);
+    fseek(disk, (sb.first_data_block_offset * sb.block_size), SEEK_SET);
     
-    int block_number = 1;
+    int block_offset = 0;
     while (fread(&block, sizeof(Block), 1, disk) == 1) {
         if (!block.is_used) {
             fseek(disk, -sizeof(Block), SEEK_CUR);
@@ -31,11 +31,11 @@ int search_free_block () {
             break;
         };
 
-        block_number++;
+        block_offset++;
     };
 
     fclose(disk);
-    return block_number;
+    return block_offset;
 };
 
 #endif

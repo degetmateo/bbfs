@@ -5,7 +5,7 @@
 
 #include "fs.h"
 
-int chain_blocks (int block_a_number, int block_b_number) {
+int chain_blocks (int block_a_offset, int block_b_offset) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
@@ -18,10 +18,10 @@ int chain_blocks (int block_a_number, int block_b_number) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block block_a;
-    fseek(disk, (sb.block_size * (sb.starting_data_block - 1 + block_a_number)), SEEK_SET);
+    fseek(disk, (sb.block_size * (sb.first_data_block_offset + block_a_offset)), SEEK_SET);
     fread(&block_a, sizeof(Block), 1, disk);
 
-    block_a.next_block = block_b_number;
+    block_a.next_block_offset = block_b_offset;
 
     fseek(disk, -sizeof(Block), SEEK_CUR);
     fwrite(&block_a, sizeof(Block), 1, disk);

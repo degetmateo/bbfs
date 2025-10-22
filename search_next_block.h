@@ -7,7 +7,7 @@
 #include "search_free_block.h"
 #include "chain_blocks.h"
 
-int search_next_block (unsigned int block_number) {
+int search_next_block (unsigned int block_offset) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
@@ -20,19 +20,19 @@ int search_next_block (unsigned int block_number) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block actual_block;
-    fseek(disk, (sb.block_size * (sb.starting_data_block - 1 + block_number)), SEEK_SET);
+    fseek(disk, (sb.block_size * (sb.first_data_block_offset + block_offset)), SEEK_SET);
     fread(&actual_block, sizeof(Block), 1, disk);
 
-    unsigned int next_block_number;
+    unsigned int next_block_offset;
 
-    if (actual_block.next_block != 0) {
-        next_block_number = actual_block.next_block;
+    if (actual_block.next_block_offset != 0) {
+        next_block_offset = actual_block.next_block_offset;
     } else {
-        next_block_number = search_free_block();
+        next_block_offset = search_free_block();
     };
     
     fclose(disk);
-    return next_block_number;
+    return next_block_offset;
 };
 
 #endif

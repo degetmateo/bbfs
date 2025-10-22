@@ -6,7 +6,7 @@
 
 #include "fs.h"
 
-int write_block (unsigned int block_number, char* data, unsigned long size) {
+int write_block (unsigned int block_offset, char* data, unsigned long size) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
@@ -19,7 +19,7 @@ int write_block (unsigned int block_number, char* data, unsigned long size) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Block block;
-    fseek(disk, (sb.block_size * (sb.starting_data_block - 1 + block_number)), SEEK_SET);
+    fseek(disk, (sb.block_size * (sb.first_data_block_offset + block_offset)), SEEK_SET);
     fread(&block, sizeof(Block), 1, disk);
 
     memset(block.data, 0, sizeof(block.data));

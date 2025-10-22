@@ -20,11 +20,11 @@ int create_file (char filename[32]) {
     fread(&sb, sizeof(Superblock), 1, disk);
 
     Inode inode;
-    fseek(disk, ((sb.starting_inode_block - 1) * sb.block_size), SEEK_SET);
+    fseek(disk, (sb.first_inode_block_offset * sb.block_size), SEEK_SET);
 
     int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
-        if (inode_number >= sb.total_inodes) {
+        if (inode_number > sb.total_inodes) {
             perror("create_file: No hay más Inodes libres.");
             fclose(disk);
             return -1;
@@ -33,7 +33,7 @@ int create_file (char filename[32]) {
         if (!inode.is_used) {
             inode.is_used = 1;
             memcpy(inode.filename, filename, 32);
-            inode.starting_block = search_free_block();
+            inode.starting_block_offset = search_free_block();
             
             fseek(disk, -sizeof(Inode), SEEK_CUR);
             fwrite(&inode, sizeof(Inode), 1, disk);
