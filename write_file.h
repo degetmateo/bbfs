@@ -10,6 +10,7 @@
 #include "write_block.h"
 #include "chain_blocks.h"
 #include "search_next_block.h"
+#include "unchain_block.h"
 
 int write_file (char filename[32], Buffer buffer) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -54,7 +55,12 @@ int write_file (char filename[32], Buffer buffer) {
             fclose(disk);
             return -1;
         };
-        
+
+        // if (offset >= buffer.size) {
+        //     unchain_block(actual_block_offset);
+        //     break;
+        // };
+            
         int next_block_offset = search_next_block(actual_block_offset);
         
         if (next_block_offset == -1) {
@@ -63,9 +69,9 @@ int write_file (char filename[32], Buffer buffer) {
             fclose(disk);
             return -1;
         };
-        
+            
         chain_blocks(actual_block_offset, next_block_offset);
-        
+            
         actual_block_offset = next_block_offset;
         offset = offset + to_write;
     };
