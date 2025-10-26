@@ -24,8 +24,9 @@ int search_free_block () {
     while (fread(&block, sizeof(Block), 1, disk) == 1) {
         if (!block.is_used) {
             fseek(disk, -sizeof(Block), SEEK_CUR);
-
+            
             block.is_used = 1;
+            block.next_block_offset = 0xFFFFFFFF;
             
             fwrite(&block, sizeof(Block), 1, disk);
             break;

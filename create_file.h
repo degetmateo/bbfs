@@ -31,11 +31,12 @@ int create_file (char filename[32]) {
         };
 
         if (!inode.is_used) {
+            fseek(disk, -sizeof(Inode), SEEK_CUR);
+            
             inode.is_used = 1;
             memcpy(inode.filename, filename, 32);
             inode.starting_block_offset = search_free_block();
             
-            fseek(disk, -sizeof(Inode), SEEK_CUR);
             fwrite(&inode, sizeof(Inode), 1, disk);
             break;
         };
@@ -44,7 +45,6 @@ int create_file (char filename[32]) {
     };
     
     fclose(disk);
-
     printf("Se ha creado un archivo con nombre: %32s", filename);
     return 0;
 };

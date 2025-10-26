@@ -5,6 +5,7 @@
 #include "create_file.h"
 #include "write_file.h"
 #include "read_block.h"
+#include "read_file.h"
 
 #include "./utils/read_console.h"
 
@@ -40,6 +41,17 @@ int console_read_block () {
     return 0;
 }
 
+int console_read_file () {
+    char filename[32];
+    printf("Nombre del archivo: ");
+    scanf("%32s", filename);
+
+    char* content = read_file(filename);
+    printf("%s", content);
+    free(content);
+    return 0;
+}
+
 int main () {
     while (1) {
         printf("\n");
@@ -49,7 +61,7 @@ int main () {
         printf("2. Leer Superblock.\n");
         printf("3. Crear archivo.\n");
         printf("4. Escribir archivo.\n");
-        printf("5. Leer bloque.\n\n");
+        printf("5. Leer archivo.\n\n");
         
         int option;
 
@@ -74,7 +86,7 @@ int main () {
                 console_write_file();
                 break;
             case 5:
-                console_read_block();
+                console_read_file();
                 break;
             default:
                 continue;

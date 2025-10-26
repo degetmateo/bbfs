@@ -8,9 +8,8 @@
 #include "fs.h"
 #include "./utils/read_console.h"
 #include "write_block.h"
-#include "chain_blocks.h"
 #include "search_next_block.h"
-#include "unchain_block.h"
+#include "free_chained_blocks.h"
 
 int write_file (char filename[32], Buffer buffer) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -55,26 +54,26 @@ int write_file (char filename[32], Buffer buffer) {
             fclose(disk);
             return -1;
         };
-
-        // if (offset >= buffer.size) {
-        //     unchain_block(actual_block_offset);
-        //     break;
-        // };
-            
-        int next_block_offset = search_next_block(actual_block_offset);
         
-        if (next_block_offset == -1) {
-            perror("write_file: No hay bloques disponibles.");
-            free(buffer.data);
-            fclose(disk);
-            return -1;
-        };
-            
-        chain_blocks(actual_block_offset, next_block_offset);
-            
-        actual_block_offset = next_block_offset;
         offset = offset + to_write;
+
+        if (offset < buffer.size) {
+            int next_block_offset = search_next_block(actual_block_offset);
+        
+            if (next_block_offset == -1) {
+                perror("write_file: No hay bloques disponibles.");
+                free(buffer.data);
+                fclose(disk);
+                return -1;
+            };
+
+            chain_blocks(actual_block_offset, next_block_offset);
+            
+            actual_block_offset = next_block_offset;
+        };
     };
+
+    free_chained_blocks(actual_block_offset);
 
     free(buffer.data);
     fclose(disk);

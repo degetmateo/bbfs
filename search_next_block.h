@@ -25,7 +25,7 @@ int search_next_block (unsigned int block_offset) {
 
     unsigned int next_block_offset;
 
-    if (actual_block.next_block_offset != 0) {
+    if (actual_block.next_block_offset != 0xFFFFFFFF) {
         next_block_offset = actual_block.next_block_offset;
     } else {
         next_block_offset = search_free_block();
