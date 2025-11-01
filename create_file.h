@@ -34,6 +34,7 @@ int create_file (char filename[32]) {
             fseek(disk, -sizeof(Inode), SEEK_CUR);
             
             inode.is_used = 1;
+            memset(inode.filename, 0, sizeof(inode.filename));
             memcpy(inode.filename, filename, 32);
             inode.starting_block_offset = search_free_block();
             

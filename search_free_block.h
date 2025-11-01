@@ -27,6 +27,7 @@ int search_free_block () {
             
             block.is_used = 1;
             block.next_block_offset = 0xFFFFFFFF;
+            memset(block.data, 0, sizeof(block.data));
             
             fwrite(&block, sizeof(Block), 1, disk);
             break;

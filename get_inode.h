@@ -12,7 +12,7 @@ Inode get_inode (char filename[32]) {
     if (!disk) {
         perror("get_inode: Ha ocurrido un error.");
         fclose(disk);
-        return (Inode) { NULL, NULL, NULL, NULL };
+        return (Inode) { 0 };
     };
 
     Superblock sb;
@@ -27,7 +27,7 @@ Inode get_inode (char filename[32]) {
         if (inode_number > sb.total_inodes) {
             perror("get_inode: Ha ocurrido un error.");
             fclose(disk);
-            return (Inode) { NULL, NULL, NULL, NULL };
+            return (Inode) { 0 };
         };
 
         if (strcmp(inode.filename, filename) == 0) {

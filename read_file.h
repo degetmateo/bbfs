@@ -28,13 +28,17 @@ char* read_file(char filename[32]) {
             fclose(disk);
             return NULL;
         }
+        
+        inode_number++;
+        
+        if (!inode.is_used) {
+            continue;
+        };
 
         if (strcmp(filename, inode.filename) == 0) {
             break;
         };
-
-        inode_number++;
-    }
+    };
 
     char* result = NULL;
     unsigned long size = 0;  
