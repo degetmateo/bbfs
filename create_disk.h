@@ -9,11 +9,11 @@
 #include "read_sb.h"
 
 #define DISK_SIZE 5 * 1024 * 1024 // 5 MB en Bytes
-#define BLOCK_SIZE 64 // 64 Bytes
-#define TOTAL_BLOCKS (DISK_SIZE / BLOCK_SIZE)
-#define TOTAL_INODES 200 // 200 Inodes
-#define INODE_SIZE 64 // 64 Bytes
+#define BLOCK_SIZE 128 // 64 Bytes
+#define TOTAL_INODES 4 // 4 Inodes
+#define INODE_SIZE 128 // 128 Bytes
 #define BLOCK_DATA_SIZE 59 // 59 Bytes
+#define TOTAL_BLOCKS ((DISK_SIZE - (TOTAL_INODES + 1) * INODE_SIZE) / BLOCK_SIZE)
 
 int create_disk () {
     FILE *disk = fopen("disk.bbfs", "w+b");

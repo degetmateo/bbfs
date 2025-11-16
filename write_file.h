@@ -43,12 +43,13 @@ int write_file (char filename[32], Buffer buffer) {
 
     int actual_block_offset = inode.starting_block_offset;
     unsigned long offset = 0;
+    int is_first = 1;
 
     while (offset < buffer.size) {
         unsigned long remaining = buffer.size - offset;
         unsigned long to_write = (remaining > sb.block_data_size) ? sb.block_data_size : remaining;
 
-        if (write_block(actual_block_offset, buffer.data + offset, to_write) == -1) {
+        if (write_block(actual_block_offset, buffer.data + offset, to_write, is_first) == -1) {
             perror("write_file: Ha ocurrido un error al escribir el archivo.");
             free(buffer.data);
             fclose(disk);
@@ -71,6 +72,8 @@ int write_file (char filename[32], Buffer buffer) {
             
             actual_block_offset = next_block_offset;
         };
+
+        is_first = 0;
     };
 
     free_chained_blocks(actual_block_offset);

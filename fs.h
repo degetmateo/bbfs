@@ -30,18 +30,20 @@ typedef struct __attribute__((packed)) {
 
 // Inode representa un archivo
 typedef struct __attribute__((packed)) {
-    char is_used; // 1 Byte
-    unsigned int starting_block_offset; // 4 Bytes, 5B
-    char filename[32]; // 32 Bytes, 37B
-    char reserved[27];
-} Inode;
+    char is_used;                           // 1 Byte
+    unsigned int starting_block_offset;     // 4 Bytes
+    char filename[32];                      // 32 Bytes
+    char reserved[91];                      // 91 Bytes
+} Inode;                                    // 128 Bytes en total
 
-// Block es la unidad minima de organizacion
 typedef struct __attribute__((packed)) {
-    char is_used; // 1 B
-    unsigned int next_block_offset; // 4B, 5B
-    char data[59]; // 64B, 69B
-} Block;
+    char is_used;                           // 1 Byte
+    unsigned int next_block_offset;         // 4 Bytes
+    char data[59];                          // 59 Bytes
+
+    unsigned char prev_hash[32];            // 32 Bytes - primer bloque con genesis, para los demas es el hash del anterior
+    unsigned char hash[32];                 // 32 Bytes - data + prev_hash
+} Block;                                    // 128 Bytes en total
 
 typedef struct {
     char *data;
