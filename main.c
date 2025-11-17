@@ -7,6 +7,7 @@
 #include "read_block.h"
 #include "read_file.h"
 #include "delete_file.h"
+#include "read_directory.h"
 
 #include "./utils/read_console.h"
 
@@ -63,6 +64,10 @@ int console_delete_file () {
     return 0;
 };
 
+int console_read_directory () {
+    return read_directory();
+};
+
 int main () {
     while (1) {
         printf("\n");
@@ -73,7 +78,8 @@ int main () {
         printf("3. Crear archivo.\n");
         printf("4. Escribir archivo.\n");
         printf("5. Leer archivo.\n");
-        printf("6. Eliminar archivo.\n\n");
+        printf("6. Leer directorio.\n");
+        printf("7. Eliminar archivo.\n\n");
         
         int option;
 
@@ -101,6 +107,9 @@ int main () {
                 console_read_file();
                 break;
             case 6:
+                console_read_directory();
+                break;
+            case 7:
                 console_delete_file();
                 break;
             default:

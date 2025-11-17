@@ -11,21 +11,21 @@
 // Superblock es el primer bloque del sistema de archivos
 // Contiene metadatos especiales sobre el sistema de archivos
 typedef struct __attribute__((packed)) {
-    char name[4]; // 4 Bytes, 4B
-    char detail[4]; // 4 Bytes, 8B
+    char name[4];                           // 4 Bytes, 4B
+    char detail[4];                         // 4 Bytes, 8B
 
-    unsigned int total_blocks; // 4 Bytes, 12B
-    unsigned int block_size; // 4 Bytes, 16B
+    unsigned int total_blocks;              // 4 Bytes, 12B
+    unsigned int block_size;                // 4 Bytes, 16B
 
-    unsigned int total_inodes; // 4 Bytes, 20B
-    unsigned int inode_size; // 4 Bytes, 24B
+    unsigned int total_inodes;              // 4 Bytes, 20B
+    unsigned int inode_size;                // 4 Bytes, 24B
 
-    unsigned int first_data_block_offset; // 4 Bytes, 28B
-    unsigned int first_inode_block_offset; // 4 Bytes, 32B
+    unsigned int first_data_block_offset;   // 4 Bytes, 28B
+    unsigned int first_inode_block_offset;  // 4 Bytes, 32B
 
-    unsigned int block_data_size; // 4B, 36B
+    unsigned int block_data_size;           // 4B, 36B
 
-    char reserved[28];
+    char reserved[92];                      // 92 Bytes, 128B
 } Superblock; // packed para que el compilador no ponga bytes de relleno en memoria
 
 // Inode representa un archivo

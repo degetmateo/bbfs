@@ -14,7 +14,7 @@ Buffer read_console() {
     unsigned long reserved = 128;
     unsigned long size = 0;
 
-    char* buffer = malloc(reserved);
+    char* buffer = calloc(reserved, 1);
     if (!buffer) return (Buffer){NULL, 0};
 
     int c;

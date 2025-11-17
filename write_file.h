@@ -10,6 +10,7 @@
 #include "write_block.h"
 #include "search_next_block.h"
 #include "free_chained_blocks.h"
+#include "utils/print_bytes.h"
 
 int write_file (char filename[32], Buffer buffer) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -41,7 +42,10 @@ int write_file (char filename[32], Buffer buffer) {
         inode_number++;
     };
 
+
     int actual_block_offset = inode.starting_block_offset;
+    int prev_block_offset = -1;
+    
     unsigned long offset = 0;
     int is_first = 1;
 
@@ -49,7 +53,11 @@ int write_file (char filename[32], Buffer buffer) {
         unsigned long remaining = buffer.size - offset;
         unsigned long to_write = (remaining > sb.block_data_size) ? sb.block_data_size : remaining;
 
-        if (write_block(actual_block_offset, buffer.data + offset, to_write, is_first) == -1) {
+        // printf("write_file\n\n");
+        // printf("buffer.data\n");
+        // print_bytes(buffer.data, 59);
+
+        if (write_block(actual_block_offset, buffer.data + offset, to_write, is_first, prev_block_offset) == -1) {
             perror("write_file: Ha ocurrido un error al escribir el archivo.");
             free(buffer.data);
             fclose(disk);
@@ -57,6 +65,8 @@ int write_file (char filename[32], Buffer buffer) {
         };
         
         offset = offset + to_write;
+        prev_block_offset = actual_block_offset;
+        is_first = 0;
 
         if (offset < buffer.size) {
             int next_block_offset = search_next_block(actual_block_offset);
@@ -72,8 +82,6 @@ int write_file (char filename[32], Buffer buffer) {
             
             actual_block_offset = next_block_offset;
         };
-
-        is_first = 0;
     };
 
     free_chained_blocks(actual_block_offset);

@@ -11,7 +11,7 @@ int create_file (char filename[32]) {
     FILE *disk = fopen("disk.bbfs", "r+b");
 
     if (!disk) {
-        perror("create_file: Ha ocurrido un error.");
+        fprintf(stderr, "\nERROR (create_file): Ha ocurrido un error al abrir el disco.\n");
         return -1;
     };
 
@@ -25,7 +25,7 @@ int create_file (char filename[32]) {
     int inode_number = 1;
     while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
         if (inode_number > sb.total_inodes) {
-            perror("create_file: No hay más Inodes libres.");
+            fprintf(stderr, "\nERROR (create_file): No hay más Inodes libres.\n");
             fclose(disk);
             return -1;
         };
@@ -46,7 +46,7 @@ int create_file (char filename[32]) {
     };
     
     fclose(disk);
-    printf("Se ha creado un archivo con nombre: %32s", filename);
+    printf("Se ha creado un archivo con nombre: %32s\n", filename);
     return 0;
 };
 
