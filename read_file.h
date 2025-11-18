@@ -5,7 +5,8 @@
 #include <string.h>
 
 #include "fs.h"
-#include "sha256/check_block.h"
+#include "check_block.h"
+#include "check_chain.h"
 
 char* read_file(char filename[32]) {
     FILE *disk = fopen("disk.bbfs", "r+b");
@@ -46,17 +47,28 @@ char* read_file(char filename[32]) {
     unsigned int actual_block_offset = inode.starting_block_offset;
 
     Block block;
+    Block prev_block;
     while (actual_block_offset != 0xFFFFFFFF) {
         fseek(disk, (sb.first_data_block_offset + actual_block_offset) * sb.block_size, SEEK_SET);
+
+        prev_block = block;
 
         if (fread(&block, sizeof(Block), 1, disk) != 1) {
             perror("Error al leer bloque");
             break;
         };
 
-        if (check_block((unsigned char*) block.data, block.prev_hash, block.hash) != 0) {
-            perror("read_file: Bloque corrupto, no coincide su hash interno.");
-            return NULL;
+        if (block.data != 0 && block.next_block_offset != 0xFFFFFFFF) {
+            if (check_block((unsigned char*) block.data, block.prev_hash, block.hash) != 0) {
+                perror("read_file: Bloque corrupto, no coincide su hash interno.");
+                return NULL;
+            };
+        };
+
+        if (block.next_block_offset != 0xFFFFFFFF) {
+            if (check_chain(actual_block_offset, block.next_block_offset) != 0) {
+                return NULL;
+            };
         };
 
         unsigned long len = strnlen(block.data, sizeof(block.data));

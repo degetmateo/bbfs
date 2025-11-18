@@ -24,6 +24,11 @@ int read_directory () {
             break;
         };
 
+        if (!inode.is_used) {
+            inode_number++;
+            continue;
+        };
+
         printf("%s\n", inode.filename);
         inode_number++;
     };

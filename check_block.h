@@ -3,8 +3,9 @@
 
 #include <string.h>
 
-#include "../fs.h"
-#include "hash.h"
+#include "utils/print_bytes.h"
+#include "fs.h"
+#include "./sha256/hash.h"
 
 int check_block (unsigned char data[59], unsigned char prev_hash[32], unsigned char actual_hash[32]) {
     unsigned char rehashed[32];
