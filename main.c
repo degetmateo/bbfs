@@ -78,8 +78,7 @@ int main (int argc, char *argv[]) {
         printf("4. Escribir archivo.\n");
         printf("5. Leer archivo.\n");
         printf("6. Leer directorio.\n");
-        printf("7. Eliminar archivo.\n");
-        printf("8. Montar sistema de archivos.\n\n");
+        printf("7. Eliminar archivo.\n\n");
         
         int option;
 
