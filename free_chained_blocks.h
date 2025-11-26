@@ -6,9 +6,10 @@
 
 #include "fs.h"
 #include "free_block.h"
+#include "open_disk.h"
 
 int free_chained_blocks (unsigned int block_offset) {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+    FILE *disk = open_disk();
 
     if (!disk) {
         perror("free_chained_blocks: Ha ocurrido un error.");

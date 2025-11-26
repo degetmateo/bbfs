@@ -8,9 +8,10 @@
 #include "sha256/hash.h"
 #include "utils/print_bytes.h"
 #include "get_block_hash.h"
+#include "open_disk.h"
 
 int write_block (unsigned int block_offset, char data[59], unsigned long size, int is_first, int prev_block_offset) {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+    FILE *disk = open_disk();
 
     if (!disk) {
         perror("write_block: Ha ocurrido un error.");
@@ -84,8 +85,12 @@ int write_block (unsigned int block_offset, char data[59], unsigned long size, i
     memset(block.hash, 0, sizeof(block.hash));
     memcpy(block.hash, block_hash, sizeof(block.hash));
 
+    printf("TEST 1");
+
     fseek(disk, -sizeof(Block), SEEK_CUR);
     fwrite(&block, sizeof(Block), 1, disk);
+
+    printf("TEST 2");
 
     fclose(disk);
     return 0;

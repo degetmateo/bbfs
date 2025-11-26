@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "create_disk.h"
 #include "read_sb.h"
 #include "create_file.h"
@@ -8,8 +7,8 @@
 #include "read_file.h"
 #include "delete_file.h"
 #include "read_directory.h"
-
 #include "./utils/read_console.h"
+#include "./fuse_ops/fuse_operations.h"
 
 int console_create_file () {
     char filename[32];
@@ -68,7 +67,7 @@ int console_read_directory () {
     return read_directory();
 };
 
-int main () {
+int main (int argc, char *argv[]) {
     while (1) {
         printf("\n");
         printf("Elige una opcion:\n\n");
@@ -79,7 +78,8 @@ int main () {
         printf("4. Escribir archivo.\n");
         printf("5. Leer archivo.\n");
         printf("6. Leer directorio.\n");
-        printf("7. Eliminar archivo.\n\n");
+        printf("7. Eliminar archivo.\n");
+        printf("8. Montar sistema de archivos.\n\n");
         
         int option;
 
@@ -118,5 +118,5 @@ int main () {
         };
     };
 
-    return 0;
+    return 0;   
 };

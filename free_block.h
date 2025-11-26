@@ -3,9 +3,10 @@
 
 #include <stdio.h>
 #include "fs.h"
+#include "open_disk.h"
 
 int free_block (unsigned int block_offset) {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+    FILE *disk = open_disk();
 
     if (!disk) {
         perror("free_block: Ha ocurrido un error.");

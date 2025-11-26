@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 FILE* open_disk () {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+    FILE *disk = fopen("/home/deget/proyectos/bbfs/disk.bbfs", "r+b");
 
     if (!disk) {
         perror("open_disk: Ha ocurrido un error.");

@@ -11,9 +11,10 @@
 #include "search_next_block.h"
 #include "free_chained_blocks.h"
 #include "utils/print_bytes.h"
+#include "open_disk.h"
 
-int write_file (char filename[32], Buffer buffer) {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+int write_file (const char* filename, Buffer buffer) {
+    FILE *disk = open_disk();
 
     if (!disk) {
         perror("write_file: Ha ocurrido un error.");

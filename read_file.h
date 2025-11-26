@@ -7,9 +7,10 @@
 #include "fs.h"
 #include "check_block.h"
 #include "check_chain.h"
+#include "open_disk.h"
 
 char* read_file(char filename[32]) {
-    FILE *disk = fopen("disk.bbfs", "r+b");
+    FILE *disk = open_disk();
 
     if (!disk) {
         perror("Error al abrir disco");
