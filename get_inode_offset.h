@@ -14,7 +14,9 @@ int get_inode_offset (char filename[32]) {
         return -1;
     };
 
-    Superblock sb = get_superblock();
+    Superblock sb;
+    fseek(disk, 0, SEEK_SET);
+    fread(&sb, sizeof(Superblock), 1, disk);
 
     Inode inode;
     fseek(disk, (sb.first_inode_block_offset * sb.block_size), SEEK_SET);
@@ -27,9 +29,13 @@ int get_inode_offset (char filename[32]) {
             return -1;
         };
 
+        
         if (strcmp(filename, inode.filename) == 0) {
             break;
         };
+
+        inode_count++;
+        inode_offset++;
     };
 
     fclose(disk);

@@ -13,14 +13,42 @@
 #include "get_inode_offset.h"
 
 int delete_file (char filename[32]) {
-    Superblock sb = get_superblock();
-    Inode inode = get_inode(filename);
     FILE *disk = open_disk();
 
-    free_chained_blocks(inode.starting_block_offset);
-    free_block(inode.starting_block_offset);
+    if (!disk) {
+        return -1;
+    };
 
-    free_inode(get_inode_offset(filename));
+    Superblock sb;
+    fseek(disk, 0, SEEK_SET);
+    fread(&sb, sizeof(Superblock), 1, disk);
+
+    Inode inode;
+    fseek(disk, (sb.first_inode_block_offset * sb.block_size), SEEK_SET);
+
+    unsigned int inode_number = 1;
+    while (fread(&inode, sizeof(Inode), 1, disk) == 1) {
+        if (inode_number > sb.total_inodes) {
+            perror("delete_file: No se ha encontrado el archivo.");
+            fclose(disk);
+            return -1;
+        }
+        
+        inode_number++;
+        
+        if (inode.is_used != 1) {
+            continue;
+        };
+
+        if (strcmp(filename, inode.filename) == 0) {
+            free_chained_blocks(inode.starting_block_offset);
+            free_block(inode.starting_block_offset);
+
+            free_inode(get_inode_offset(filename));
+            
+            break;
+        };
+    };
 
     fclose(disk);
     return 0;

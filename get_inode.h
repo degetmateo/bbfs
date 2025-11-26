@@ -6,6 +6,7 @@
 
 #include "fs.h"
 #include "open_disk.h"
+#include <errno.h>
 
 int get_inode (char filename[32], Inode* dest) {
     FILE *disk = open_disk();
