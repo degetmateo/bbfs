@@ -59,7 +59,8 @@ char* read_file(char filename[32]) {
             break;
         };
 
-        if (block.data != 0 && block.next_block_offset != 0xFFFFFFFF) {
+        if (block.data != 0) {
+            printf("chechinkg block...");
             if (check_block((unsigned char*) block.data, block.prev_hash, block.hash) != 0) {
                 perror("read_file: Bloque corrupto, no coincide su hash interno.");
                 return NULL;
